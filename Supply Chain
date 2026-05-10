@@ -1,0 +1,253 @@
+# Supply Chain Shockwave Engine
+# Includes Simulation + Conditional Probability + Analysis
+
+import random
+
+# -----------------------------
+# DATA STORAGE
+# -----------------------------
+# Stores history for inventory, demand, delay, and shortage
+inventory_history = []
+demand_history = []
+delay_history = []
+shortage_history = []
+
+
+# -----------------------------
+# SYSTEM INFORMATION
+# -----------------------------
+def info():
+
+    print("\nSystem Information")
+    print("--------------------------------")
+
+    print("This model simulates your supply chain system with:")
+    print("- How your demand changes")
+    print("- Random delays and Inventory Shocks in your operations")
+    print("- Conditional probability based on your simulation")
+
+    print("\nIt gives the important information:")
+    print("- System stability status")
+    print("- Risk of shortages before they happen")
+    print("- Impact of those delays and demand spikes")
+
+    print("--------------------------------\n")
+
+
+# -----------------------------
+# SIMULATION
+# -----------------------------
+def simulate():  # Start with empty values
+
+    inventory_history.clear()
+    demand_history.clear()
+    delay_history.clear()
+    shortage_history.clear()
+
+    print("--------------------------------")
+    print("\nLet's take a look at your operation!")
+    print("Fill out the following information below.")
+    print("--------------------------------")
+
+    inventory = float(input("Starting inventory: "))
+    supply = float(input("Supply Rate per Step: "))
+    base_demand = float(input("Base demand: "))
+
+    # -----------------------------
+    # INPUT VALIDATION (0 OR 1 ONLY)
+    # -----------------------------
+    while True:
+        delay_factor = input("Delay Factor (0-1): ")
+
+        if delay_factor == "0" or delay_factor == "1":
+            delay_factor = float(delay_factor)
+            break
+        else:
+            print("Please select either 0 or 1")
+
+    steps = int(input("Simulation Steps: "))
+
+    print("\nSimulation Complete. Look at your results below.\n")
+
+    for t in range(steps):  # Loop
+
+        # Random Shock (Delay in system)
+        delay = random.uniform(0, delay_factor)
+
+        # Demand Fluctuation (Change in Demand)
+        demand_spike = random.uniform(0.7, 1.5)
+        demand = base_demand * demand_spike
+
+        # Inventory Change (Shockwave Model)
+        dI = supply - demand - (delay * demand)
+        inventory += dI
+
+        if inventory < 0:  # Inventory must always be stocked
+            inventory = 0
+
+        # Shortage Status
+        shortage = 1 if inventory < demand * 2 else 0
+
+        # Demand Status
+        high_demand = 1 if demand > base_demand * 1.2 else 0
+
+        # Delay Status
+        high_delay = 1 if delay > delay_factor * 0.6 else 0
+
+        # Store Data
+        inventory_history.append(inventory)
+        demand_history.append(high_demand)
+        delay_history.append(high_delay)
+        shortage_history.append(shortage)
+
+        print("Step:", t + 1)
+        print("Inventory:", round(inventory, 2))
+        print("Demand:", round(demand, 2))
+        print("Delay:", round(delay, 2))
+        print("Shortage:", shortage)
+        print("---------------------")
+
+
+# -----------------------------
+# CONDITIONAL PROBABILITY
+# -----------------------------
+def probability():
+
+    if len(shortage_history) == 0:
+        print("\nRun simulation first on the main menu.")
+        return
+
+    print("\nConditional Probability Analysis")
+
+    total = len(shortage_history)
+
+    hd_count = 0
+    hd_shortage = 0
+
+    delay_count = 0
+    delay_shortage = 0
+
+    total_shortage = sum(shortage_history)
+
+    for i in range(total):
+
+        # P(Shortage | High Demand)
+        if demand_history[i] == 1:
+            hd_count += 1
+            if shortage_history[i] == 1:
+                hd_shortage += 1
+
+        # P(Shortage | High Delay)
+        if delay_history[i] == 1:
+            delay_count += 1
+            if shortage_history[i] == 1:
+                delay_shortage += 1
+
+    print("\nConditional Probability Analysis Complete:")
+
+    if hd_count > 0:
+        print("P(Shortage | High Demand):",
+              round(hd_shortage / hd_count, 3))
+    else:
+        print("P(Shortage | High Demand): No data")
+
+    if delay_count > 0:
+        print("P(Shortage | High Delay):",
+              round(delay_shortage / delay_count, 3))
+    else:
+        print("P(Shortage | High Delay): No data")
+
+    print("\nBase shortage rate:",
+          round(total_shortage / total, 3))
+    print("\n")
+
+
+# -----------------------------
+# SYSTEM ANALYSIS
+# -----------------------------
+def analysis():
+
+    if len(inventory_history) == 0:
+        print("\nRun simulation first on the main menu..")
+        return
+
+    print("\nSystem Analysis")
+
+    avg_inventory = sum(inventory_history) / len(inventory_history)
+    shortage_rate = sum(shortage_history) / len(shortage_history)
+
+    print("Average inventory:", round(avg_inventory, 2))
+    print("Shortage rate:", round(shortage_rate, 3))
+    print("\n")
+
+    if shortage_rate > 0.5:
+        print("SYSTEM UNSTABLE")  # System unstable
+        print("High risk. Take action now.")
+
+    elif shortage_rate > 0.2:
+        print("SYSTEM MODERATE")  # System moderate
+        print("Continue to monitor")
+
+    else:
+        print("System Stable")  # System stable
+        print("Everything looks good!")
+
+    print("\n")
+
+
+# -----------------------------
+# GRAPH
+# -----------------------------
+def graph():
+
+    if len(inventory_history) == 0:
+        print("\nRun simulation first.")
+        return
+
+    print("\nInventory Over Time\n")
+
+    for v in inventory_history:
+        print(round(v, 1), "#" * int(v / 2))
+
+
+# -----------------------------
+# MENU
+# -----------------------------
+while True:
+
+    print("\nWelcome to the Supply Chain Shockwave Engine!")
+    print("\nSelect one of the following to get started:")
+
+    print("1 - Run Simulation")
+    print("2 - Conditional Probability")
+    print("3 - System Analysis")
+    print("4 - Graph")
+    print("5 - Exit")
+    print("6 - System Information")
+
+    choice = input("Select: ")
+
+    if choice == "1":
+        simulate()
+
+    elif choice == "2":
+        probability()
+
+    elif choice == "3":
+        analysis()
+
+    elif choice == "4":
+        graph()
+
+    elif choice == "5":
+        break
+
+    elif choice == "6":
+        info()
+
+    else:
+        print("Please select between 1–6")
+
+
+
+
