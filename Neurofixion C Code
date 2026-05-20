@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main() {
+
+    FILE *file;
+
+    float stress;
+    float focus;
+    float energy;
+    float workload;
+
+    int steps;
+
+    srand(time(0));
+
+    printf("\nNeuroFixion Engine\n");
+    printf("--------------------------\n");
+
+    printf("Initial Stress (0-100): ");
+    scanf("%f", &stress);
+
+    printf("Initial Focus (0-100): ");
+    scanf("%f", &focus);
+
+    printf("Initial Energy (0-100): ");
+    scanf("%f", &energy);
+
+    printf("Workload Intensity (0-10): ");
+    scanf("%f", &workload);
+
+    printf("Simulation Steps: ");
+    scanf("%d", &steps);
+
+    file = fopen("neurofixion_data.csv", "w");
+
+    fprintf(file,
+    "Stress,Focus,Energy,Overload\n");
+
+    printf("\nSimulation Running...\n\n");
+
+    for(int t = 0; t < steps; t++) {
+
+        // Random cognitive shock
+        float distraction =
+        ((float)rand() / RAND_MAX) * 10;
+
+        // Differential equation style updates
+        float dS =
+        workload + distraction - (energy * 0.05);
+
+        float dF =
+        -(stress * 0.03) + (energy * 0.02);
+
+        float dE =
+        -(workload * 0.8) - (stress * 0.1);
+
+        stress += dS;
+        focus += dF;
+        energy += dE;
+
+        // Boundaries
+        if(stress < 0)
+            stress = 0;
+
+        if(focus < 0)
+            focus = 0;
+
+        if(energy < 0)
+            energy = 0;
+
+        // Overload condition
+        int overload = 0;
+
+        if(stress > 80 && energy < 30)
+            overload = 1;
+
+        // Save to CSV
+        fprintf(file,
+        "%f,%f,%f,%d\n",
+        stress,
+        focus,
+        energy,
+        overload);
+
+        printf("Step: %d\n", t + 1);
+        printf("Stress: %.2f\n", stress);
+        printf("Focus: %.2f\n", focus);
+        printf("Energy: %.2f\n", energy);
+        printf("Overload: %d\n", overload);
+
+        printf("----------------------\n");
+    }
+
+    fclose(file);
+
+    printf("\nData exported to neurofixion_data.csv\n");
+
+    return 0;
+}
