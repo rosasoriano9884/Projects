@@ -1,1 +1,113 @@
+# Supply Chain Shockwave Engine
+# R Analytics System
 
+# -----------------------------
+# IMPORT DATA
+# -----------------------------
+# Example data from Python simulation
+
+inventory <- c(120, 115, 108, 95, 82, 70, 58, 40, 25, 10)
+shortage <- c(0,0,0,0,0,1,1,1,1,1)
+demand <- c(80,85,90,100,120,140,150,160,170,180)
+delay <- c(0,0,0,1,0,1,1,1,1,1)
+
+# -----------------------------
+# BASIC STATISTICS
+# -----------------------------
+
+avg_inventory <- mean(inventory)
+max_inventory <- max(inventory)
+min_inventory <- min(inventory)
+
+cat("Average Inventory:", avg_inventory, "\n")
+cat("Maximum Inventory:", max_inventory, "\n")
+cat("Minimum Inventory:", min_inventory, "\n")
+
+# -----------------------------
+# SHORTAGE PROBABILITY
+# -----------------------------
+
+shortage_probability <- mean(shortage)
+
+cat("\nP(Shortage):",
+    round(shortage_probability, 3), "\n")
+
+# -----------------------------
+# CONDITIONAL PROBABILITY
+# -----------------------------
+# P(Shortage | High Delay)
+
+high_delay <- delay == 1
+
+conditional_probability <-
+mean(shortage[high_delay])
+
+cat("\nP(Shortage | High Delay):",
+    round(conditional_probability, 3), "\n")
+
+# -----------------------------
+# INVENTORY TREND GRAPH
+# -----------------------------
+
+plot(
+  inventory,
+  type = "o",
+  main = "Inventory Shockwave Trend",
+  xlab = "Simulation Step",
+  ylab = "Inventory Level"
+)
+
+# -----------------------------
+# DEMAND TREND GRAPH
+# -----------------------------
+
+plot(
+  demand,
+  type = "o",
+  main = "Demand Shockwave Trend",
+  xlab = "Simulation Step",
+  ylab = "Demand"
+)
+
+# -----------------------------
+# INVENTORY DISTRIBUTION
+# -----------------------------
+
+hist(
+  inventory,
+  main = "Inventory Distribution",
+  xlab = "Inventory Levels"
+)
+
+# -----------------------------
+# SYSTEM STABILITY ANALYSIS
+# -----------------------------
+
+if(shortage_probability > 0.5){
+
+  cat("\nSYSTEM STATUS: UNSTABLE\n")
+  cat("High shortage risk detected.\n")
+
+} else if(shortage_probability > 0.2){
+
+  cat("\nSYSTEM STATUS: MODERATE\n")
+  cat("Continue monitoring supply chain.\n")
+
+} else {
+
+  cat("\nSYSTEM STATUS: STABLE\n")
+  cat("Inventory system looks healthy.\n")
+}
+
+# -----------------------------
+# LINEAR TREND MODEL
+# -----------------------------
+# Forecast inventory direction
+
+time <- 1:length(inventory)
+
+model <- lm(inventory ~ time)
+
+summary(model)
+
+cat("\nInventory Forecast Trend Generated.\n")
