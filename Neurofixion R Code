@@ -1,0 +1,105 @@
+# NeuroFixion Analytics Engine
+
+# -----------------------------
+# IMPORT DATA FROM C
+# -----------------------------
+
+data <- read.csv("neurofixion_data.csv")
+
+stress <- data$Stress
+focus <- data$Focus
+energy <- data$Energy
+overload <- data$Overload
+
+# -----------------------------
+# BASIC STATISTICS
+# -----------------------------
+
+avg_stress <- mean(stress)
+avg_focus <- mean(focus)
+avg_energy <- mean(energy)
+
+cat("Average Stress:",
+    round(avg_stress, 2), "\n")
+
+cat("Average Focus:",
+    round(avg_focus, 2), "\n")
+
+cat("Average Energy:",
+    round(avg_energy, 2), "\n")
+
+# -----------------------------
+# CONDITIONAL PROBABILITY
+# -----------------------------
+# P(Overload | High Stress)
+
+high_stress <- stress > 70
+
+conditional_probability <-
+mean(overload[high_stress])
+
+cat("\nP(Overload | High Stress):",
+    round(conditional_probability, 3),
+    "\n")
+
+# -----------------------------
+# STRESS GRAPH
+# -----------------------------
+
+plot(
+  stress,
+  type = "o",
+  main = "Stress Evolution",
+  xlab = "Simulation Step",
+  ylab = "Stress"
+)
+
+# -----------------------------
+# ENERGY GRAPH
+# -----------------------------
+
+plot(
+  energy,
+  type = "o",
+  main = "Energy Decay",
+  xlab = "Simulation Step",
+  ylab = "Energy"
+)
+
+# -----------------------------
+# OVERLOAD ANALYSIS
+# -----------------------------
+
+overload_rate <- mean(overload)
+
+cat("\nOverload Rate:",
+    round(overload_rate, 3), "\n")
+
+# -----------------------------
+# SYSTEM STATUS
+# -----------------------------
+
+if(overload_rate > 0.5){
+
+  cat("\nSYSTEM STATUS: UNSTABLE\n")
+
+} else if(overload_rate > 0.2){
+
+  cat("\nSYSTEM STATUS: MODERATE\n")
+
+} else {
+
+  cat("\nSYSTEM STATUS: STABLE\n")
+}
+
+# -----------------------------
+# LINEAR FORECAST MODEL
+# -----------------------------
+
+time <- 1:length(stress)
+
+model <- lm(stress ~ time)
+
+summary(model)
+
+cat("\nStress Forecast Generated.\n")
