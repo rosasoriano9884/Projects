@@ -1,98 +1,114 @@
-# Supply Chain Shockwave Engine (R Analytics System)
-
-# Import Data
-
-# Example data from Python simulation
-
-inventory=c(120, 115, 108, 95, 82, 70, 58, 40, 25, 10)
-shortage=c(0,0,0,0,0,1,1,1,1,1)
-demand=c(80,85,90,100,120,140,150,160,170,180)
-delay=c(0,0,0,1,0,1,1,1,1,1)
+# Supply Chain Shockwave Engine
+# R Analytics System
 
 
-# Mean, Maximum, and Minimum 
+# Install and Load ggplot2
 
-
-average_inventory = mean(inventory)
-maximum_inventory = max(inventory)
-minimum_inventory = min(inventory)
-
-cat("Average Inventory:", average_inventory, "\n")
-cat("Maximum Inventory:", maximum_inventory, "\n")
-cat("Minimum Inventory:", minimum_inventory, "\n")
-
-# SHORTAGE PROBABILITY
-
-shortage_probability=mean(shortage)
-
-cat("\nP(Shortage):", round(shortage_probability, 3), "\n")
-
-# CONDITIONAL PROBABILITY
-# P(Shortage | High Delay)
-
-high_delay = delay == 1
-
-conditional_probability=mean(shortage[high_delay])
-
-cat("\nP(Shortage | High Delay):", round(conditional_probability, 3), "\n")
-
-
-# INVENTORY TREND GRAPH
-
-plot(
-  inventory,
-  type = "o",
-  main = "Inventory Shockwave Trend",
-  xlab = "Simulation Step",
-  ylab = "Inventory Level"
-)
-
-
-# DEMAND TREND GRAPH
-
-plot(
-  demand,
-  type = "o",
-  main = "Demand Shockwave Trend",
-  xlab = "Simulation Step",
-  ylab = "Demand"
-)
-
-# INVENTORY DISTRIBUTION
-
-hist(
-  inventory,
-  main = "Inventory Distribution",
-  xlab = "Inventory Levels"
-)
-
-
-# SYSTEM STABILITY ANALYSIS
-
-if(shortage_probability > 0.5){
-
-  cat("\nSYSTEM STATUS: UNSTABLE\n")
-  cat("High shortage risk detected.\n")
-
-} else if(shortage_probability > 0.2){
-
-  cat("\nSYSTEM STATUS: MODERATE\n")
-  cat("Continue monitoring supply chain.\n")
-
-} else {
-
-  cat("\nSYSTEM STATUS: STABLE\n")
-  cat("Inventory system looks healthy.\n")
+if (!requireNamespace("ggplot2", quietly = TRUE)) {
+  install.packages("ggplot2")
 }
 
+library(ggplot2)
 
-# LINEAR TREND MODEL
-# Forecast inventory direction
 
-time=1:length(inventory)
+# EXAMPLE DATA FROM PYTHON SIMULATION
 
-model=lm(inventory ~ time)
+inventory = c(120, 115, 108, 95, 82, 70, 58, 40, 25, 10)
+shortage = c(0, 0, 0, 0, 0, 1, 1, 1, 1, 1)
+demand = c(80, 85, 90, 100, 120, 140, 150, 160, 170, 180)
+delay = c(0, 0, 0, 1, 0, 1, 1, 1, 1, 1)
 
-summary(model)
+time = 1:length(inventory)
 
-cat("\nInventory Forecast Trend Generated.\n")
+
+# CREATE DATASET
+
+supply_chain = data.frame(
+  time,
+  inventory,
+  shortage,
+  demand,
+  delay
+)
+
+print(supply_chain)
+
+
+# Regression Model
+
+m1 = lm(inventory ~ time, data = supply_chain)
+print(summary(model))
+
+
+# Regression Line of Inventory Shockwave Trend
+
+inventory_graph = ggplot(data = supply_chain,
+  aes(x = time, y = inventory)
+) +
+  geom_point(
+    color = "blue",
+    size = 3
+  ) +
+  
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    se = TRUE,
+    color = "green",
+    linewidth = 2
+  ) +
+  labs(
+    title = "Inventory Shockwave Trend",
+    x = "Simulation Step",
+    y = "Inventory Level"
+  ) +
+  theme_dark()
+
+print(inventory_graph)
+
+
+# Demand Graph Shockwave Trend
+
+demand_graph = ggplot(
+  data = supply_chain,
+  aes(x = time, y = demand)
+) +
+  geom_line(
+    color = "green",
+    linewidth = 2
+  ) +
+  geom_point(
+    color = "blue",
+    size = 3
+  ) +
+  labs(
+    title = "Demand Shockwave Trend",
+    x = "Simulation Step",
+    y = "Demand Level"
+  ) +
+  theme_dark()
+
+print(demand_graph)
+
+
+# Inventory Distribution Histogram
+
+inventory_histogram = ggplot(
+  data = supply_chain,
+  aes(x = inventory)
+) +
+  geom_histogram(
+    bins = 5,
+    fill = "blue",
+    color = "green"
+  ) +
+  labs(
+    title = "Inventory Distribution",
+    x = "Inventory Level",
+    y = "Frequency"
+  ) +
+  theme_dark()
+
+print(inventory_histogram)
+
+
